@@ -1,7 +1,3 @@
-// script.js
-// 환경변수 사용 시: Vercel에서는 NEXT_PUBLIC_ 접두사 필요
-const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
-
 let isCelsius = true; // 단위 상태
 
 // 유틸 함수
@@ -26,21 +22,21 @@ function updateChart(labels, temps){
   hourChart.update();
 }
 
-// fetch API
+// fetch API (API Route 사용)
 async function fetchCurrentByCity(city){
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`);
+  const res = await fetch(`/api/weather?type=current&city=${encodeURIComponent(city)}`);
   if(!res.ok) throw new Error('도시를 찾을 수 없습니다');
   return res.json();
 }
 
 async function fetchForecastByCity(city){
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`);
+  const res = await fetch(`/api/weather?type=forecast&city=${encodeURIComponent(city)}`);
   if(!res.ok) throw new Error('예보를 불러올 수 없습니다');
   return res.json();
 }
 
 async function fetchAirQuality(lat, lon){
-  const res = await fetch(`https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`);
+  const res = await fetch(`/api/weather?type=air&lat=${lat}&lon=${lon}`);
   if(!res.ok) throw new Error('공기질 데이터를 불러올 수 없습니다');
   return res.json();
 }
@@ -68,7 +64,6 @@ function renderForecastList(forecast){
     container.appendChild(el);
   });
 
-  // 시간별 차트
   const next = forecast.list.slice(0,12);
   const labels = next.map(x => x.dt_txt.split(' ')[1].slice(0,5));
   const temps = next.map(x => isCelsius ? x.main.temp : c2f(x.main.temp));
@@ -126,8 +121,8 @@ function getByGPS(){
     try{
       const lat = pos.coords.latitude;
       const lon = pos.coords.longitude;
-      const cur = await (await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`)).json();
-      const f = await (await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`)).json();
+      const cur = await (await fetch(`/api/weather?type=current&lat=${lat}&lon=${lon}`)).json();
+      const f = await (await fetch(`/api/weather?type=forecast&lat=${lat}&lon=${lon}`)).json();
       renderCurrent(cur);
       renderForecastList(f);
       saveRecent(cur.name);
