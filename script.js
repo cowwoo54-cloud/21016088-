@@ -22,22 +22,31 @@ function updateChart(labels, temps){
   hourChart.update();
 }
 
-// fetch API (API Route 사용)
+// API 호출 (서버 환경변수 사용)
 async function fetchCurrentByCity(city){
   const res = await fetch(`/api/weather?type=current&city=${encodeURIComponent(city)}`);
-  if(!res.ok) throw new Error('도시를 찾을 수 없습니다');
+  if(!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || '도시를 찾을 수 없습니다');
+  }
   return res.json();
 }
 
 async function fetchForecastByCity(city){
   const res = await fetch(`/api/weather?type=forecast&city=${encodeURIComponent(city)}`);
-  if(!res.ok) throw new Error('예보를 불러올 수 없습니다');
+  if(!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || '예보를 불러올 수 없습니다');
+  }
   return res.json();
 }
 
 async function fetchAirQuality(lat, lon){
   const res = await fetch(`/api/weather?type=air&lat=${lat}&lon=${lon}`);
-  if(!res.ok) throw new Error('공기질 데이터를 불러올 수 없습니다');
+  if(!res.ok) {
+    const err = await res.json();
+    throw new Error(err.error || '공기질 데이터를 불러올 수 없습니다');
+  }
   return res.json();
 }
 
@@ -72,7 +81,10 @@ function renderForecastList(forecast){
 
 // 공기질 렌더링
 function renderAQI(data){
-  if(!data || !data.list || !data.list.length){ $('aqiInfo').textContent='공기질: 데이터 없음'; return; }
+  if(!data || !data.list || !data.list.length){ 
+    $('aqiInfo').textContent='공기질: 데이터 없음'; 
+    return; 
+  }
   const a = data.list[0].main.aqi;
   const map = {1:'좋음',2:'보통',3:'나쁨(약)',4:'나쁨',5:'매우 나쁨'};
   $('aqiInfo').textContent = `공기질: ${map[a]} (AQI:${a})`;
@@ -135,7 +147,11 @@ function getByGPS(){
 }
 
 // 이벤트 리스너
-$('searchBtn').addEventListener('click', ()=>{ const city = $('cityInput').value.trim(); if(city) doSearch(city); else alert('도시를 입력하세요'); });
+$('searchBtn').addEventListener('click', ()=>{ 
+  const city = $('cityInput').value.trim(); 
+  if(city) doSearch(city); 
+  else alert('도시를 입력하세요'); 
+});
 $('cityInput').addEventListener('keyup', e=>{ if(e.key==='Enter') $('searchBtn').click(); });
 $('gpsBtn').addEventListener('click', getByGPS);
 $('unitBtn').addEventListener('click', ()=>{
