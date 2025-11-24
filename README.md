@@ -38,5 +38,5 @@ Vercel을 통해 배포하며, 환경변수를 활용해 API Key를 안전하게
 
 1. GitHub 저장소 클론
 ```bash
-git clone https://github.com/cowwoo54-cloud/21016088-.git
+git clone https://github.com/cowwoo54-cloud/21016088.git
 cd 21016088-
