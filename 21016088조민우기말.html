@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>나만의 날씨 웹사이트</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1 id="title">나만의 날씨 웹사이트</h1>
+    </header>
+
+    <div class="search">
+      <input id="cityInput" type="text" placeholder="도시를 입력하세요 (예: Seoul)">
+      <button id="searchBtn">검색</button>
+      <button id="gpsBtn">현재 위치</button>
+      <button id="unitBtn">°C / °F</button>
+    </div>
+
+    <div class="top-row">
+      <div class="card">
+        <h2 id="cityName">-</h2>
+        <div id="curSummary">-</div>
+        <div id="tempLarge">-°C</div>
+        <div id="humidity">습도: -%</div>
+        <div id="wind">풍속: - m/s</div>
+        <div id="aqiInfo">공기질: -</div>
+      </div>
+
+      <div class="card" id="chartCard">
+        <canvas id="hourChart" height="150"></canvas>
+      </div>
+    </div>
+
+    <div id="forecast" class="forecast-row"></div>
+
+    <div class="recent" id="recent"></div>
+
+    <footer>
+      API: OpenWeatherMap. API Key는 환경변수 사용.
+    </footer>
+  </div>
+
+  <script src="script.js" type="module"></script>
+</body>
+</html>
