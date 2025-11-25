@@ -1,3 +1,5 @@
+// 파일명: /api/weather.js
+
 export default async function handler(req, res) {
   const city = req.query.city;
   const API_KEY = process.env.OPENWEATHER_API_KEY;
@@ -24,7 +26,7 @@ export default async function handler(req, res) {
     // 3. AQI (공기질) - lat/lon 필요
     const { lat, lon } = currentData.coord;
     const airRes = await fetch(
-      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+      `https://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
     );
     if (!airRes.ok) throw new Error(`HTTP error! status: ${airRes.status}`);
     const airData = await airRes.json();
@@ -40,4 +42,5 @@ export default async function handler(req, res) {
     res.status(500).json({ error: err.message });
   }
 }
+
 
