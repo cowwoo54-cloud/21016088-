@@ -7,13 +7,35 @@ export default async function handler(req, res) {
   }
 
   try {
-    const response = await fetch(
+    // 1. 현재 날씨
+    const currentRes = await fetch(
       `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
     );
-    if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
+    if (!currentRes.ok) throw new Error(`HTTP error! status: ${currentRes.status}`);
+    const currentData = await currentRes.json();
 
-    const data = await response.json();
-    res.status(200).json(data);
+    // 2. 5일 forecast
+    const forecastRes = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=metric`
+    );
+    if (!forecastRes.ok) throw new Error(`HTTP error! status: ${forecastRes.status}`);
+    const forecastData = await forecastRes.json();
+
+    // 3. AQI (공기질) - lat/lon 필요
+    const { lat, lon } = currentData.coord;
+    const airRes = await fetch(
+      `http://api.openweathermap.org/data/2.5/air_pollution?lat=${lat}&lon=${lon}&appid=${API_KEY}`
+    );
+    if (!airRes.ok) throw new Error(`HTTP error! status: ${airRes.status}`);
+    const airData = await airRes.json();
+
+    // 4. 한 번에 JSON 반환
+    res.status(200).json({
+      current: currentData,
+      forecast: forecastData,
+      air: airData
+    });
+
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
